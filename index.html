@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/61811/web-animations-next-2.2.0.min.js"></script>
+
+    <style>
+        #pole1, #pole2, #pole3{
+            position: absolute;
+            top: 80px;
+            width: 5px;
+            height: 70px;
+            background: #999
+        }
+        .plate{
+            position: absolute;
+            height: 4px;
+            background: black   
+        }
+    </style>
+</head>
+<body>
+    
+
+        <div id="pole1" style="left: 60px"></div>
+        <div id="pole2" style="left: 160px"></div>
+        <div id="pole3" style="left: 260px"></div>
+
+
+
+    <script>
+        let state = [
+            [7,6,5,4,3,2,1],
+            [],
+            []
+        ]
+        let bottom = 80+70
+        let space = 100
+        let leftMargin = 60
+        let delay = 100;
+
+        let html = "";
+        for(let j = 0; j < state.length; j++){
+            let pole = state[j];
+            for(let i = 0; i<pole.length; i++){
+                let w = pole[i];
+                let width = w*5+20;
+
+                html += `<div class="plate" data-plate="${w}" style="width: ${width}px; left: ${space*j+leftMargin - width/2 + 2.5}px; top: ${bottom-i*10}px" ></div>`
+            }
+        }
+
+        document.write(html)
+
+        async function move(from, to){
+            let pole = state[from].pop();
+            state[to] = [...state[to], pole];
+            
+            console.log(pole)
+            let width = parseFloat( document.querySelector('[data-plate="'+pole+'"]').style.width )
+
+            document.querySelector('[data-plate="'+pole+'"]').animate(
+                [
+                    { top: document.querySelector('[data-plate="'+pole+'"]').style.top, left: space*from+leftMargin - width/2 + 2.5+"px" },
+                    { top: 40+"px", left: space*from+leftMargin - width/2 + 2.5+"px" },
+                    { top: 40+"px", left: space*to+leftMargin - width/2 + 2.5+"px" },
+                    { top: bottom-(state[to].length-1)*10+"px", left: space*to+leftMargin - width/2 + 2.5+"px" },
+                ], {
+                    duration: 200,
+                    fill: 'forwards',
+                }
+            );
+
+            await new Promise(r => setTimeout(r, 210))
+        };
+
+        (async ()=>{
+            await new Promise(r => setTimeout(r, 1000))
+
+            
+
+           async function DoIt( disknumber,  fromTower,  interTower,  toTower){
+                if(disknumber == 1){
+                  await  move(fromTower, toTower);
+                }else
+                {
+                   await DoIt(disknumber-1, fromTower, toTower, interTower);
+                  await  move( fromTower, toTower);
+                   await DoIt(disknumber-1, interTower,fromTower,toTower);
+                }
+            }
+           await DoIt(state[0].length, 0,1,2)
+
+            
+        })()
+
+
+
+
+    </script>
+</body>
+</html>
