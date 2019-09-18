@@ -8,7 +8,7 @@ The 3 criteria for recursion:
 3) Repetition: If discnumber > 1, we repeat the methodcall 
 
 # Algorithm written in javascript<br>
-Note - that the async/await is solely for gfx.
+Note - that the async/await is solely for gfx purposes.
 ```
 async function DoIt( discnumber,  fromTower,  interTower,  toTower){
                 if(discnumber == 1){
